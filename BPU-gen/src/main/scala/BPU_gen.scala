@@ -2,6 +2,7 @@
 import help._
 import chisel3._
 import chisel3.util._
+import predictor_core.bimodal
 
 object BPU_gen extends App {
 
@@ -20,6 +21,8 @@ object BPU_gen extends App {
       algorithm_config match {
         case b: BimodalConfig =>
           println("Generating Verilog for Bimodal Predictor...")
+          emitVerilog(new bimodal(b))
+          println("Done Generating Bimodal predictor!")
       }
     } catch {
       case e: Exception =>

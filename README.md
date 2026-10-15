@@ -20,10 +20,12 @@ This project is managed using the **Scrum methodology** new things might come.
 * **Configuration using JSON** Parse JSON file used as configuration (address width32/64, algorithm, pht size, counter width, history table wifth/size) ✅
 * **Algorithm selection Type:** Select between Bimodal, GShare, or simple Static prediction ✅
 * **Handle errors of programm input/config** ✅
+* **Agree on Chisel IO to match CPU interface** ✅
 * **Implemment/test Bimodal**
 * **Implemment/test GAg**
 * **Implemment/test PAg**
 * **Export the Chisel modules as synthesizable Verilog**
 * **Integrate the generated Verilog into our existing SystemVerilog RISC-V CPU**
 * **Collect execution data to compare the Bimodal, GAg, and PAg algorithms and measure performance and accuracy gains**
+* (If time allows) Parameterize the BTB too
 * (If time allows) Implement a Tournament Predictor (combines Bimodal and GAg with a meta-predictor)
