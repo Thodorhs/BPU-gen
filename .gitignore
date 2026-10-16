@@ -14,6 +14,7 @@ project/project/
 .bsp/
 .metals/
 .scala-build/
+.bloop/
 
 # IntelliJ IDEA
 .idea/
@@ -22,13 +23,19 @@ project/project/
 *.ipr
 out/
 
-# Generated hardware files
-*.fir
-*.sv
-*.v
-*.anno.json
-
 # OS files
 .DS_Store
 Thumbs.db
 desktop.ini
+
+
+### Chisel & FIRRTL Generated Files ###
+*.v
+*.sv
+*.fir
+*.pb
+*.anno.json
+*.json
+
+# allow config.json:
+!config.json
