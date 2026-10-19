@@ -23,9 +23,10 @@ This project is managed using the **Scrum methodology** new things might come.
 * **Agree on Chisel IO to match CPU interface** ✅
 * **Implemment/test Bimodal**
 * **Implemment/test GAg**
+* **Add general test for all algorithms**
+* **Integrate the generated Verilog into our existing SystemVerilog RISC-V CPU and run**
+* **Create small presentation and demo**
 * **Implemment/test PAg**
-* **Export the Chisel modules as synthesizable Verilog**
-* **Integrate the generated Verilog into our existing SystemVerilog RISC-V CPU**
 * **Collect execution data to compare the Bimodal, GAg, and PAg algorithms and measure performance and accuracy gains**
 * (If time allows) Parameterize the BTB too
 * (If time allows) Implement a Tournament Predictor (combines Bimodal and GAg with a meta-predictor)
