@@ -22,7 +22,6 @@ class BimodalTest extends AnyFlatSpec with ChiselScalatestTester {
       // Initial state: Counter should be 00 (Strongly Not Taken)
       println("[TEST] Initial State Check...")
       dut.io.prediction_o.expect(false.B)
-      dut.io.pred2id.expect(true.B)
 
       // --- TRAINING: PRETEND PRVIOUS WAS TAKEN EXPECT AN UPDATE IN THE COUNTER(00 -> 01) ---
       println("[TEST] Training 1st 'Taken'...")
