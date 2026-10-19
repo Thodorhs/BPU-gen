@@ -21,7 +21,7 @@ class bimodal(val config: BimodalConfig) extends base_predictor(config.address_w
     } .otherwise {
       io.prediction_o := false.B
     }
-    io.pred2id := false.B
+    io.pred2id := true.B
   }
 
   // train when i get address back from br_cntrl_bus_t

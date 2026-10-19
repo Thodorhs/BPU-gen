@@ -21,7 +21,7 @@ This project is managed using the **Scrum methodology** new things might come.
 * **Algorithm selection Type:** Select between Bimodal, GShare, or simple Static prediction ✅
 * **Handle errors of programm input/config** ✅
 * **Agree on Chisel IO to match CPU interface** ✅
-* **Implemment/test Bimodal**
+* **Implemment/test Bimodal** ✅
 * **Implemment/test GAg**
 * **Add general test for all algorithms**
 * **Integrate the generated Verilog into our existing SystemVerilog RISC-V CPU and run**
