@@ -1,0 +1,4 @@
+[submodule "BPU-gen/RISC-V-Core"]
+	path = BPU-gen/RISC-V-Core
+	url = https://github.com/Jvlachos/RISC-V-Core.git
+	branch = bpu-gen
