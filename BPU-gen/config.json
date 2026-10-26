@@ -2,10 +2,10 @@
   "address_width": 32,
   "test":{
     "algorithm": "GAg",
-    "pattern_history_table_size": 4,
+    "pattern_history_table_size": 1024,
     "counter_width": 2,
-    "history_table_width": 2,
-    "history_table_size": 1
+    "ghr_size": 10,
+    "pc_bits" : 0
   },
   "test2": {
     "algorithm": "PAg",

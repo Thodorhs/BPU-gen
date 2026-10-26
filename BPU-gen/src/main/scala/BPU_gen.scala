@@ -3,6 +3,7 @@ import help._
 import chisel3._
 import chisel3.util._
 import predictor_core.bimodal
+import  predictor_core.GAg
 
 object BPU_gen extends App {
 
@@ -23,6 +24,11 @@ object BPU_gen extends App {
           println("Generating Verilog for Bimodal Predictor...")
           emitVerilog(new bimodal(b))
           println("Done Generating Bimodal predictor!")
+
+        case g : GAgConfig =>
+          println("Generating Verilog for GAg Predictor...")
+          emitVerilog(new GAg(g))
+          println("Done Generating GAg predictor!")
       }
     } catch {
       case e: Exception =>

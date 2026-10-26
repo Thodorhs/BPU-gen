@@ -5,6 +5,7 @@ import chisel3._
 class BrCntrlBus(val addrWidth: Int) extends Bundle {
   val is_taken          = Bool() // 1 if we jumped to what we guessed
   val i_addr            = UInt(addrWidth.W) // PC address that was used
+  val branch_resolved   = Bool() // 1 when execute stage has resolved the branch (is_taken/i_addr valid)
 }
 
 // Matches: predictor control module IO
