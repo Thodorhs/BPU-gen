@@ -1,40 +1,25 @@
-
-import help._
 import chisel3._
-import chisel3.util._
-import predictor_core.bimodal
-import  predictor_core.GAg
+import help.{json, print_help}
+import predictor_core.predictor_top
 
 object BPU_gen extends App {
-
-  def run(args: Array[String]): Unit = {
-    if (args.length != 1) {
-      print_help.printHelp()
-      return
-    }
-
-    val config = args(0)
-    println(s"Starting BPU-gen for configuration: $config")
-
-    try {
-      val algorithm_config = json.parse_config(config)
-
-      algorithm_config match {
-        case b: BimodalConfig =>
-          println("Generating Verilog for Bimodal Predictor...")
-          emitVerilog(new bimodal(b))
-          println("Done Generating Bimodal predictor!")
-
-        case g : GAgConfig =>
-          println("Generating Verilog for GAg Predictor...")
-          emitVerilog(new GAg(g))
-          println("Done Generating GAg predictor!")
-      }
-    } catch {
-      case e: Exception =>
-        println(s"\n[GENERATION STOPPED] ${e.getMessage}\n")
-    }
+  if (args.length != 1) {
+    print_help.printHelp()
+    sys.exit(1)
   }
 
-  run(args)
+  val configName = args(0)
+
+  try {
+    // 1. Get the generic config (it could be Bimodal or GAg)
+    val config = json.parse_config(configName)
+
+    println(s"Generating Verilog for configuration: $configName")
+
+    // 2. Just pass it to PredictorTop! It will figure out what to build.
+    emitVerilog(new predictor_top(config))
+
+  } catch {
+    case e: Exception => println(s"\n[ERROR] ${e.getMessage}\n")
+  }
 }

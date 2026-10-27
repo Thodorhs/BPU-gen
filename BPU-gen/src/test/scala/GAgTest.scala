@@ -21,15 +21,12 @@ class GAgSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   // Fetch stage asks for a prediction for `pc`.
   private def predict(dut: GAg, pc: Long): Boolean = {
-    dut.io.is_branch_i.poke(true.B)
     dut.io.read_addr_i.poke(pc.U)
     val r = dut.io.prediction_o.peek().litToBoolean
-    dut.io.is_branch_i.poke(false.B)
     r
   }
 
   private def init(dut: GAg): Unit = {
-    dut.io.is_branch_i.poke(false.B)
     dut.io.read_addr_i.poke(0.U)
     dut.io.br_cntrl_i.branch_resolved.poke(false.B)
     dut.io.br_cntrl_i.i_addr.poke(0.U)
@@ -39,7 +36,7 @@ class GAgSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "index with the GHR only and train on branch_resolved" in {
     // pht 4 entries, pc_bits = 0 -> index = GHR[1:0]; counters start at 00
-    val config = GAgConfig(address_width = 32, pht_size = 1024, ghr_size = 10, counter_width = 2)
+    val config = GAgConfig(address_width = 32, pht_size = 4, ghr_size = 2, counter_width = 2, activeLowReset=true)
     test(new GAg(config)) { dut =>
       init(dut)
 
@@ -66,7 +63,7 @@ class GAgSpec extends AnyFlatSpec with ChiselScalatestTester {
 
   it should "include PC bits in the index when pc_bits > 0" in {
     // pht 8 entries, pc_bits = 2 -> index = {GHR[0], PC[3:2]}
-    val config = GAgConfig(address_width = 32, pht_size = 8, ghr_size = 4, counter_width = 2, pc_bits = 2)
+    val config = GAgConfig(address_width = 32, pht_size = 8, ghr_size = 4, counter_width = 2, pc_bits = 2, activeLowReset=true)
     test(new GAg(config)) { dut =>
       init(dut)
 

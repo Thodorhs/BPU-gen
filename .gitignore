@@ -39,3 +39,5 @@ desktop.ini
 
 # allow config.json:
 !config.json
+
+RISC-V-Core/

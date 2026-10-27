@@ -43,9 +43,8 @@ class GAg(val config: GAgConfig)
 //  private val pht = RegInit(
 //    VecInit(Seq.fill(phtSize)(0.U(counterWidth.W)))
 //  )
-  private val asyncReset = (!reset.asBool).asAsyncReset
 
-  private val (ghr, pht) = withReset(asyncReset) {
+  private val (ghr, pht) = {
     val history = RegInit(0.U(ghrWidth.W))
     val table = RegInit(
       VecInit(Seq.fill(phtSize)(0.U(counterWidth.W)))

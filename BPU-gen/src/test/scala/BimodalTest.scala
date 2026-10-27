@@ -7,7 +7,7 @@ import predictor_core.bimodal
 class BimodalTest extends AnyFlatSpec with ChiselScalatestTester {
 
   "Bimodal BPU" should "correctly route the selected input to the output" in {
-    val config = BimodalConfig(address_width=32,counter_width=2,pht_size=1024)
+    val config = BimodalConfig(address_width=32,counter_width=2,pht_size=16, activeLowReset=true)
 
     test(new bimodal(config)) { dut =>
       println("\n[TEST] Starting Bimodal Predictor Test...")
@@ -15,7 +15,6 @@ class BimodalTest extends AnyFlatSpec with ChiselScalatestTester {
       // (PC) address 0x00000004
       val testPC = 4.U
 
-      dut.io.is_branch_i.poke(true.B)
       dut.io.read_addr_i.poke(testPC)
       dut.io.br_cntrl_i.i_addr.poke(0.U) // 0 means "no training right now"
 

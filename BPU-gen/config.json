@@ -1,5 +1,6 @@
 {
   "address_width": 32,
+  "active_low_reset": true,
   "test":{
     "algorithm": "GAg",
     "pattern_history_table_size": 1024,
@@ -16,8 +17,8 @@
   },
   "test3": {
     "algorithm": "Bimodal",
-    "pattern_history_table_size": 1024,
-    "counter_width": 2
+    "pattern_history_table_size": 16,
+    "counter_width": 1
   }
 }
 
