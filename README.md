@@ -23,13 +23,16 @@ This project is managed using the **Scrum methodology** new things might come.
 * **Agree on Chisel IO to match CPU interface** ✅
 * **Implemment/test Bimodal** ✅
 * **Integrate the generated Verilog into our existing SystemVerilog RISC-V CPU and run** ✅
-* **Add cpu as a submodule to the repo**
-* **Implemment/test GAg**
-* **Make a script to run sbt generate and make the predictor.sv excactly where we want in the cpu files and run the metrics**
-* **Create small presentation and demo**
+* **Add cpu as a submodule to the repo** ✅
+* **Implemment/test GAg** ✅
+* **Make a python script with UI to run sbt generate and make the predictor.sv excactly where we want in the cpu files and run the metrics**
+* **Add to the script option to plot the collected execution data (from a file) of the various setups and compare the BPUs**
+* **Fix CPU files for errors so we can 'submodule init' and be ready to run and synthesize**
+* **Add tests with different kind of programs**
 * **Implemment/test PAg**
-* **Collect execution data to compare the Bimodal, GAg, and PAg algorithms and measure performance and accuracy gains**
-* **Make a script to plot the data**
-* **Update README with how to run section**
+* **Implemment/test tournament predictor (run 2 predictors and select the best result)**
+* **Try to flash to an FPGA and get real data ?**
+* **Update README/Report (dont forget how to run section)**
+* **Create final presentation and demo**
 * (If time allows) Parameterize the BTB too
 * (If time allows) Implement a Tournament Predictor (combines Bimodal and GAg with a meta-predictor)
