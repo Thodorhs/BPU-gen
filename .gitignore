@@ -40,4 +40,9 @@ desktop.ini
 # allow config.json:
 !config.json
 
-RISC-V-Core/
+BPU-gen/RISC-V-Core
+
+BPU-gen/benchmark_results.csv
+BPU-gen/benchmark_results.txt
+BPU-gen/vivado_full_log.txt
+BPU-gen/__pycache__/
