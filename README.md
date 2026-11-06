@@ -26,10 +26,8 @@ This project is managed using the **Scrum methodology** new things might come.
 * **Add cpu as a submodule to the repo** ✅
 * **Implemment/test GAg** ✅
 * **Make a python script with UI to run sbt generate and make the predictor.sv excactly where we want in the cpu files and run the metrics** ✅
-* **Add to the script option to plot the collected execution data (from a file) of the various setups and compare the BPUs**
-* **Fix submodule included in git repo pushes**
+* **Add to the script option to plot the collected execution data (from a file) of the various setups and compare the BPUs** ✅
 * **Synthesize**
-* **Fix CPU files for errors so we can 'submodule init' and be ready to run and synthesize**
 * **Add tests with different kind of programs**
 * **Implemment/test PAg**
 * **Implemment/test tournament predictor (run 2 predictors and select the best result)**
