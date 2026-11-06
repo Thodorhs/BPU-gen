@@ -6,6 +6,8 @@ import os
 import datetime
 import re
 import json
+import csv
+import matplotlib.pyplot as plt
 
 # DIR and COMMAND DEFINES
 CHISEL_PROJECT_DIR = "."  # Where your build.sbt is
@@ -16,11 +18,12 @@ DEFAULT_TARGET_FILE = "./RISC-V-Core/core/synthesis/predictor_top.sv"
 SIM_COMMAND = ["C:/Xilinx/2025.1/Vivado/bin/vivado.bat", "-mode", "batch", "-source", "run_sim.tcl"]
 
 CSV_FILE = "benchmark_results.csv"
+PLOT_DIR = "benchmark_plots"
 
 #HELPER
 def clear_benchmarks():
     with open(CSV_FILE, "w") as f:
-        f.write("Config,Algorithm,Instructions Executed,Total Branches,Conditional,Jumps,Mispredicted,Mispred Rate\n")
+        f.write("Config,Algorithm,Test,Platform,Instructions Executed,Total Branches,Conditional,Jumps,Mispredicted,Mispred Rate\n")
 
     log_box.insert(tk.END, f"\n[{datetime.datetime.now().strftime('%H:%M:%S')}] Cleared contents of {CSV_FILE}!\n")
     log_box.see(tk.END)
@@ -38,6 +41,80 @@ def extract_metric(pattern, text):
     # Uses Regex to find numbers in the Vivado output
     match = re.search(pattern, text)
     return match.group(1) if match else "0"
+
+def generate_plots():
+    log_box.insert(tk.END, f"\n[{datetime.datetime.now().strftime('%H:%M:%S')}] Generating Plots...\n")
+    window.update()
+
+    if os.path.exists(PLOT_DIR):
+        shutil.rmtree(PLOT_DIR)
+    os.makedirs(PLOT_DIR)
+
+    if not os.path.exists(CSV_FILE):
+        log_box.insert(tk.END, "[ERROR] No benchmark_results.csv found to plot.\n")
+        return
+
+    # open config.json to grab PHT sizes
+    try:
+        with open(os.path.join(CHISEL_PROJECT_DIR, "config.json"), "r") as f:
+            config_data = json.load(f)
+    except Exception as e:
+        log_box.insert(tk.END, f"[ERROR] Could not read config.json: {e}\n")
+        return
+
+    # read the CSV and group data by Platform and Test Type
+    groups = {}
+    try:
+        with open(CSV_FILE, "r") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                platform = row.get("Platform", "Unknown")
+                test_type = row.get("Test", "Unknown")
+                config_name = row["Config"]
+                algo = row["Algorithm"]
+                mispred_rate = float(row["Mispred Rate"])
+                pht_size = "Unknown"
+                if config_name in config_data and "pattern_history_table_size" in config_data[config_name]:
+                    pht_size = str(config_data[config_name]["pattern_history_table_size"])
+
+                #create the bar label: testname_algorithm_phtsize
+                label = f"{config_name}\n{algo}\n(PHT: {pht_size})"
+
+                group_key = (platform, test_type)
+                if group_key not in groups:
+                    groups[group_key] = {"labels": [], "mispred_rates": []}
+
+                groups[group_key]["labels"].append(label)
+                groups[group_key]["mispred_rates"].append(mispred_rate)
+
+        #generate a bar chart for every Platform/Test combination
+        color_palette = ['salmon', 'skyblue', 'lightgreen', 'plum', 'gold', 'lightcoral', 'cornflowerblue']
+
+        for (platform, test_type), data in groups.items():
+            plt.figure(figsize=(10, 6.5))
+            bar_colors = [color_palette[i % len(color_palette)] for i in range(len(data["labels"]))]
+            bars = plt.bar(data["labels"], data["mispred_rates"], color=bar_colors, edgecolor='black')
+            max_rate = max(data["mispred_rates"]) if data["mispred_rates"] else 100
+            plt.ylim(0, min(100, max_rate + 5))
+            plt.ylabel("Misprediction Rate (%)", fontsize=12)
+            plt.xlabel("Predictor Configuration\n(Format: [Config Name]  -  [Algorithm]  -  [PHT Size])", fontsize=11, labelpad=10)
+            plt.title(f"Branch Predictor Misprediction Rate (Lower is Better)\nTest: {test_type} | Platform: {platform}", fontsize=14, fontweight="bold")
+            plt.xticks(rotation=0, fontsize=10)
+            for bar in bars:
+                yval = bar.get_height()
+                plt.text(bar.get_x() + bar.get_width()/2, yval + (max_rate * 0.02), f"{yval:.2f}%", ha='center', va='bottom', fontweight='bold', fontsize=11)
+            plt.tight_layout()
+            filename = f"{platform}_{test_type}_MispredictionRate.png".replace(" ", "_")
+            filepath = os.path.join(PLOT_DIR, filename)
+            plt.savefig(filepath)
+            plt.close()
+
+        log_box.insert(tk.END, f"SUCCESS! Plots generated in the '{PLOT_DIR}' folder.\n")
+    except Exception as e:
+        log_box.insert(tk.END, f"[ERROR] Failed to generate plots: {e}\n")
+
+    log_box.see(tk.END)
+
 
 # MAIN STUFF
 def run_pipeline():
@@ -120,13 +197,17 @@ def run_pipeline():
             mispred = extract_metric(r"Mispredicted:\s+(\d+)", sim_output)
             rate = extract_metric(r"Mispred Rate:\s+([0-9.]+)", sim_output)
 
+            # Hardcoded parameters for now
+            test_type = "Fibonacci"
+            platform_type = "Simulated"
+
             # Check if file exists to write headers
             write_header = not os.path.exists(CSV_FILE)
 
             with open(CSV_FILE, "a") as f:
                 if write_header:
-                    f.write("Config,Algorithm,Instructions Executed,Total Branches,Conditional,Jumps,Mispredicted,Mispred Rate\n")
-                f.write(f"{config_name},{algorithm},{instr},{total_br},{cond},{jumps},{mispred},{rate}\n")
+                    f.write("Config,Algorithm,Test,Platform,Instructions Executed,Total Branches,Conditional,Jumps,Mispredicted,Mispred Rate\n")
+                f.write(f"{config_name},{algorithm},{test_type},{platform_type},{instr},{total_br},{cond},{jumps},{mispred},{rate}\n")
 
             log_box.insert(tk.END, f"\nSUCCESS! {config_name} ({algorithm}) metrics appended to {CSV_FILE}\n")
             log_box.insert(tk.END, f"Rate: {rate}%\n")
@@ -153,7 +234,7 @@ def run_pipeline():
 # UI
 window = tk.Tk()
 window.title("BPU-Gen Automated Verification Pipeline")
-window.geometry("700x650")
+window.geometry("780x650")
 
 tk.Label(window, text="BPU-Gen Pipeline Manager", font=("Arial", 16, "bold")).pack(pady=10)
 
@@ -162,12 +243,12 @@ path_frame = tk.LabelFrame(window, text="Directory Configuration", font=("Arial"
 path_frame.pack(fill="x", padx=20, pady=5)
 
 tk.Label(path_frame, text="CPU Sim Dir:").grid(row=0, column=0, sticky="e", pady=2)
-sim_dir_entry = tk.Entry(path_frame, width=70)
+sim_dir_entry = tk.Entry(path_frame, width=80)
 sim_dir_entry.grid(row=0, column=1, pady=2)
 sim_dir_entry.insert(0, DEFAULT_CPU_SIM_DIR)
 
 tk.Label(path_frame, text="Target File:").grid(row=1, column=0, sticky="e", pady=2)
-target_file_entry = tk.Entry(path_frame, width=70)
+target_file_entry = tk.Entry(path_frame, width=80)
 target_file_entry.grid(row=1, column=1, pady=2)
 target_file_entry.insert(0, DEFAULT_TARGET_FILE)
 
@@ -176,17 +257,21 @@ action_frame = tk.Frame(window)
 action_frame.pack(pady=10)
 
 tk.Label(action_frame, text="Config Name:", font=("Arial", 12)).grid(row=0, column=0, padx=5)
-config_entry = tk.Entry(action_frame, font=("Arial", 12), width=15)
+config_entry = tk.Entry(action_frame, font=("Arial", 12), width=12)
 config_entry.grid(row=0, column=1, padx=5)
 config_entry.insert(0, "test3")
 
-run_btn = tk.Button(action_frame, text="Generate & Simulate", font=("Arial", 11, "bold"), bg="green", fg="white", command=run_pipeline)
-run_btn.grid(row=0, column=2, padx=15)
+# Put the 3 buttons next to each other
+run_btn = tk.Button(action_frame, text="Run Pipeline", font=("Arial", 11, "bold"), bg="green", fg="white", command=run_pipeline)
+run_btn.grid(row=0, column=2, padx=10)
 
-clear_btn = tk.Button(action_frame, text="Clear Benchmark Results", font=("Arial", 11, "bold"), bg="red", fg="white", command=clear_benchmarks)
-clear_btn.grid(row=0, column=3, padx=5)
+plot_btn = tk.Button(action_frame, text="Generate Plots", font=("Arial", 11, "bold"), bg="#0052cc", fg="white", command=generate_plots)
+plot_btn.grid(row=0, column=3, padx=10)
 
-log_box = scrolledtext.ScrolledText(window, width=80, height=20, font=("Consolas", 10), bg="black", fg="lightgreen")
+clear_btn = tk.Button(action_frame, text="Clear Data", font=("Arial", 11, "bold"), bg="red", fg="white", command=clear_benchmarks)
+clear_btn.grid(row=0, column=4, padx=5)
+
+log_box = scrolledtext.ScrolledText(window, width=90, height=20, font=("Consolas", 10), bg="black", fg="lightgreen")
 log_box.pack(pady=10, padx=20)
 log_box.insert(tk.END, "Ready...\n")
 

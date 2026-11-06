@@ -1,1 +1,1 @@
-Config,Algorithm,Instructions Executed,Total Branches,Conditional,Jumps,Mispredicted,Mispred Rate
+Config,Algorithm,Test,Platform,Instructions Executed,Total Branches,Conditional,Jumps,Mispredicted,Mispred Rate
