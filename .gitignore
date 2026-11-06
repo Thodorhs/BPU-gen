@@ -46,3 +46,4 @@ BPU-gen/benchmark_results.csv
 BPU-gen/benchmark_results.txt
 BPU-gen/vivado_full_log.txt
 BPU-gen/__pycache__/
+benchmark_plots/
