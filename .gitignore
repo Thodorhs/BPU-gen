@@ -2,32 +2,31 @@
 *.tasty
 *.log
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# virtual machine crash logs
 hs_err_pid*
 
 # sbt build output
-target/
-project/target/
-project/project/
+**/target/
+**/project/target/
+**/project/project/
 
 # Scala build tools
-.bsp/
-.metals/
-.scala-build/
-.bloop/
+**/.bsp/
+**/.metals/
+**/.scala-build/
+**/.bloop/
 
 # IntelliJ IDEA
-.idea/
+**/.idea/
 *.iml
 *.iws
 *.ipr
-out/
+**/out/
 
 # OS files
 .DS_Store
 Thumbs.db
 desktop.ini
-
 
 ### Chisel & FIRRTL Generated Files ###
 *.v
@@ -40,10 +39,9 @@ desktop.ini
 # allow config.json:
 !config.json
 
-BPU-gen/RISC-V-Core
-
+BPU-gen/RISC-V-Core/
 BPU-gen/benchmark_results.csv
 BPU-gen/benchmark_results.txt
 BPU-gen/vivado_full_log.txt
 BPU-gen/__pycache__/
-benchmark_plots/
+BPU-gen/benchmark_plots/
