@@ -44,13 +44,9 @@ class GAg(val config: GAgConfig)
 //    VecInit(Seq.fill(phtSize)(0.U(counterWidth.W)))
 //  )
 
-  private val (ghr, pht) = {
-    val history = RegInit(0.U(ghrWidth.W))
-    val table = RegInit(
-      VecInit(Seq.fill(phtSize)(0.U(counterWidth.W)))
-    )
-    (history, table)
-  }
+  private val ghr = RegInit(0.U(ghrWidth.W))                // tiny, keep the reset
+  private val pht = Mem(phtSize, UInt(counterWidth.W))      // RAM, no reset
+  pht_init(pht, phtSize)                                     // all counters start at 0
 
   private val maxCounter = ((BigInt(1) << counterWidth) - 1).U(counterWidth.W)
 

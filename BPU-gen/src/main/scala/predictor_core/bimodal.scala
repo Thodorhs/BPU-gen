@@ -9,7 +9,8 @@ class bimodal(val config: BimodalConfig) extends base_predictor(config.address_w
   println(s"Generating PHT table for Bimodal BPU")
 
   val indexBits = log2Ceil(config.pht_size)
-  val pht = RegInit(VecInit(Seq.fill(config.pht_size)(0.U(config.counter_width.W))))
+  val pht = Mem(config.pht_size, UInt(config.counter_width.W))
+  pht_init(pht, config.pht_size)
   val pht_addr = io.read_addr_i(indexBits + 1, 2)
   io.prediction_o := false.B
     // Read from the Register array
