@@ -27,12 +27,14 @@ This project is managed using the **Scrum methodology** new things might come.
 * **Implemment/test GAg** ✅
 * **Make a python script with UI to run sbt generate and make the predictor.sv excactly where we want in the cpu files and run the metrics** ✅
 * **Add to the script option to plot the collected execution data (from a file) of the various setups and compare the BPUs** ✅
-* **Synthesize**
+* **Synthesize** ✅
+* **update simulation metrics display to say what kind of test is running and if it is simulated**
+* **Create a UART that will run and take results back**
+* **update python script to run inplementation and bitstream and flash to fpga (tcl script)**
+* **hardcoded "Fibonacci" and "Simulated" into the CSV outputs needs to get values from either from simulation or from fpga**
 * **Add tests with different kind of programs**
 * **Implemment/test PAg**
 * **Implemment/test tournament predictor (run 2 predictors and select the best result)**
 * **Try to flash to an FPGA and get real data ?**
 * **Update README/Report (dont forget how to run section)**
 * **Create final presentation and demo**
-* (If time allows) Parameterize the BTB too
-* (If time allows) Implement a Tournament Predictor (combines Bimodal and GAg with a meta-predictor)
