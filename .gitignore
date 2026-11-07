@@ -45,3 +45,5 @@ BPU-gen/benchmark_results.txt
 BPU-gen/vivado_full_log.txt
 BPU-gen/__pycache__/
 BPU-gen/benchmark_plots/
+BPU-gen/pht_init/
+BPU-gen/RISC-V-Core.zip
