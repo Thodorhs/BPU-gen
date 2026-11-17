@@ -138,9 +138,9 @@ def generate_plots():
                 yval = bar.get_height()
                 plt.text(bar.get_x() + bar.get_width()/2, yval + (max_rate * 0.02), f"{yval:.2f}%", ha='center', va='bottom', fontweight='bold', fontsize=11)
             plt.tight_layout()
-            filename = f"{platform}_{test_type}_MispredictionRate.png".replace(" ", "_")
+            filename = f"{platform}_{test_type}_MispredictionRate.jpg".replace(" ", "_")
             filepath = os.path.join(PLOT_DIR, filename)
-            plt.savefig(filepath)
+            plt.savefig(filepath, format="jpg", facecolor="white", dpi=150, pil_kwargs={"quality": 85})
             plt.close()
 
         log_box.insert(tk.END, f"SUCCESS! Plots generated in the '{PLOT_DIR}' folder.\n")
