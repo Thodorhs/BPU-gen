@@ -17,8 +17,8 @@
   },
   "test3": {
     "algorithm": "Bimodal",
-    "pattern_history_table_size": 16,
-    "counter_width": 1
+    "pattern_history_table_size": 128,
+    "counter_width": 2
   }
 }
 

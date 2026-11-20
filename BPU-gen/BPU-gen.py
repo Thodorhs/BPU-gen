@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import scrolledtext, messagebox
+from tkinter import scrolledtext, messagebox, ttk
 import subprocess
 import shutil
 import os
@@ -15,8 +15,16 @@ CHISEL_PROJECT_DIR = "."  # Where your build.sbt is
 DEFAULT_CPU_SIM_DIR = "C:/Users/prote/Desktop/DTU/02201_Agile_Hardware_Design/core/riscv"
 DEFAULT_FPGA_DIR = "C:/Users/prote/Desktop/DTU/02201_Agile_Hardware_Design/core/riscv_fpga"
 DEFAULT_TARGET_FILE = "./RISC-V-Core/core/synthesis/predictor_top.sv"
-DEFAULT_TEST_NAME = "Fibonacci"
 DEFAULT_COM_PORT = "auto"     # "auto" = find the Nexys board's USB-UART, or e.g. "COM5"
+
+# Test programs: one folder per test in TESTS_DIR, each with code.hex + codemem.hex
+# (build new ones with: python tests/build_test.py <TestName>).
+# The selected test's hex files are copied into DEFAULT_HEX_DIR before every run:
+# that is where if_stage.sv / mem_stage.sv load code.hex / codemem.hex from.
+TESTS_DIR = "tests"
+DEFAULT_HEX_DIR = "C:/Users/prote/Desktop"
+DEFAULT_TEST_NAME = "Fibonacci"
+HEX_FILES = ("code.hex", "codemem.hex")
 
 # PUT the absolute path FOR NOW ...
 VIVADO_BAT = "C:/Xilinx/2025.1/Vivado/bin/vivado.bat"
@@ -56,11 +64,33 @@ def append_result(row):
             writer.writerow(CSV_HEADER)
         writer.writerow(row)
 
+def list_tests():
+    # test folders that contain both hex files
+    if not os.path.isdir(TESTS_DIR):
+        return []
+    return sorted(name for name in os.listdir(TESTS_DIR)
+                  if all(os.path.isfile(os.path.join(TESTS_DIR, name, h)) for h in HEX_FILES))
+
+def refresh_tests():
+    # called when the dropdown opens, so newly built tests show up
+    test_combo["values"] = list_tests()
+
 def get_test_name():
-    test_name = test_entry.get().strip()
+    test_name = test_combo.get().strip()
     if not test_name:
-        raise Exception("Please enter the name of the test program (e.g., Fibonacci)")
+        raise Exception(f"Please select a test program (none found in '{TESTS_DIR}'?)")
+    if test_name not in list_tests():
+        raise Exception(f"Test '{test_name}' has no code.hex / codemem.hex in '{TESTS_DIR}/{test_name}'")
     return test_name
+
+def install_test(test_name):
+    # copy the selected program to where the core's memories load it from
+    hex_dir = hex_dir_entry.get().strip()
+    if not os.path.isdir(hex_dir):
+        raise Exception(f"Program Hex Dir does not exist: {hex_dir}")
+    for name in HEX_FILES:
+        shutil.copy(os.path.join(TESTS_DIR, test_name, name), os.path.join(hex_dir, name))
+    log(f"       Loaded test program '{test_name}' into {hex_dir}\n")
 
 def get_test_class(algorithm):
     # map the JSON algorithm name to the ChiselTest class name
@@ -223,8 +253,9 @@ def run_pipeline():
         # STEPS 1-3: Chisel test, generate, copy
         algorithm = generate_bpu(config_name, target_file)
 
-        # STEP 4: Ensure run_sim.tcl exists in the CPU directory
-        log("--> 4. Checking for TCL script...\n")
+        # STEP 4: Load the selected test program and ensure run_sim.tcl exists
+        log(f"--> 4. Loading test program '{test_name}' and checking for TCL script...\n")
+        install_test(test_name)
         tcl_target_path = os.path.join(cpu_sim_dir, "run_sim.tcl")
         if not os.path.exists(tcl_target_path):
             log("       run_sim.tcl not found in CPU folder. Copying it now...\n")
@@ -357,8 +388,10 @@ def run_fpga():
         # STEPS 1-3: Chisel test, generate, copy (same as the simulation)
         algorithm = generate_bpu(config_name, target_file)
 
-        # STEP 4: Copy the Vivado scripts into the FPGA project folder
-        log("--> 4. Copying build/program TCL scripts to the FPGA project...\n")
+        # STEP 4: Load the selected test program (built into the bitstream) and
+        #         copy the Vivado scripts into the FPGA project folder
+        log(f"--> 4. Loading test program '{test_name}' and copying build/program TCL scripts...\n")
+        install_test(test_name)
         for script in ("build_fpga.tcl", "program_fpga.tcl"):
             shutil.copy(script, os.path.join(fpga_dir, script))
 
@@ -425,7 +458,7 @@ def run_fpga():
 # UI
 window = tk.Tk()
 window.title("BPU-Gen Automated Verification Pipeline")
-window.geometry("820x720")
+window.geometry("820x750")
 
 tk.Label(window, text="BPU-Gen Pipeline Manager", font=("Arial", 16, "bold")).pack(pady=10)
 
@@ -448,9 +481,14 @@ target_file_entry = tk.Entry(path_frame, width=80)
 target_file_entry.grid(row=2, column=1, pady=2)
 target_file_entry.insert(0, DEFAULT_TARGET_FILE)
 
-tk.Label(path_frame, text="COM Port:").grid(row=3, column=0, sticky="e", pady=2)
+tk.Label(path_frame, text="Program Hex Dir:").grid(row=3, column=0, sticky="e", pady=2)
+hex_dir_entry = tk.Entry(path_frame, width=80)
+hex_dir_entry.grid(row=3, column=1, pady=2)
+hex_dir_entry.insert(0, DEFAULT_HEX_DIR)
+
+tk.Label(path_frame, text="COM Port:").grid(row=4, column=0, sticky="e", pady=2)
 com_port_entry = tk.Entry(path_frame, width=12)
-com_port_entry.grid(row=3, column=1, sticky="w", pady=2)
+com_port_entry.grid(row=4, column=1, sticky="w", pady=2)
 com_port_entry.insert(0, DEFAULT_COM_PORT)
 
 # Frame for Actions
@@ -462,11 +500,15 @@ config_entry = tk.Entry(action_frame, font=("Arial", 12), width=12)
 config_entry.grid(row=0, column=1, padx=5)
 config_entry.insert(0, "test3")
 
-# name of the program in code.hex / codemem.hex, saved in the CSV "Test" column
+# test program to run: one entry per folder in TESTS_DIR (saved in the CSV "Test" column)
 tk.Label(action_frame, text="Test Program:", font=("Arial", 12)).grid(row=0, column=2, padx=5)
-test_entry = tk.Entry(action_frame, font=("Arial", 12), width=14)
-test_entry.grid(row=0, column=3, padx=5, columnspan=2, sticky="w")
-test_entry.insert(0, DEFAULT_TEST_NAME)
+test_combo = ttk.Combobox(action_frame, font=("Arial", 12), width=14, state="readonly",
+                          values=list_tests(), postcommand=refresh_tests)
+test_combo.grid(row=0, column=3, padx=5, columnspan=2, sticky="w")
+if DEFAULT_TEST_NAME in list_tests():
+    test_combo.set(DEFAULT_TEST_NAME)
+elif list_tests():
+    test_combo.set(list_tests()[0])
 
 # Buttons next to each other
 button_frame = tk.Frame(window)

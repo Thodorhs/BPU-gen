@@ -32,8 +32,8 @@ This project is managed using the **Scrum methodology** new things might come.
 * **Create a UART that will run and take results back** ✅
 * **update python script to run inplementation and bitstream and flash to fpga (tcl script)** ✅
 * **hardcoded "Fibonacci" and "Simulated" into the CSV outputs needs to get values from either from simulation or from fpga** ✅
-* **Right now script adds programm test name(e.g Fibonacci) to the csv results from the UI. Need to fix this and actually choose what programm we will run from the Python script and save it to risv project and run (maybe drop down menu?)**
-* **Add tests with different kind of programs**
+* **Right now script adds programm test name(e.g Fibonacci) to the csv results from the UI. Need to fix this and actually choose what programm we will run from the Python script and save it to risv project and run (maybe drop down menu?)** ✅
+* **Add tests with different kind of programs** ✅
 * **Implemment/test PAg**
 * **Implemment/test tournament predictor (run 2 predictors and select the best result)**
 * **Try to flash to an FPGA and get real data ?** ✅

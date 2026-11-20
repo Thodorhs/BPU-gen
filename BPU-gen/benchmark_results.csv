@@ -1,1 +1,14 @@
 Config,Algorithm,Test,Platform,Instructions Executed,Total Branches,Conditional,Jumps,Mispredicted,Mispred Rate
+test3,Bimodal,Fibonacci,FPGA,28885,5666,2874,2792,941,32.74
+test,GAg,Fibonacci,FPGA,28885,5666,2874,2792,596,20.74
+test,GAg,Fibonacci,Simulated,28884,5666,2874,2792,596,20.74
+test3,Bimodal,Fibonacci,Simulated,28884,5666,2874,2792,941,32.74
+test,GAg,Fibonacci,Simulated,28884,5666,2874,2792,596,20.74
+test3,Bimodal,Fibonacci,Simulated,28884,5666,2874,2792,664,23.10
+test,GAg,Fibonacci,Simulated,28884,5666,2874,2792,342,11.90
+test3,Bimodal,BubbleSort,Simulated,68014,13565,4451,9114,671,15.08
+test3,Bimodal,NestedLoops,Simulated,102547,18519,4725,13794,165,3.49
+test,GAg,NestedLoops,Simulated,102547,18519,4725,13794,165,3.49
+test,GAg,BubbleSort,Simulated,68014,13565,4451,9114,475,10.67
+test3,Bimodal,BubbleSort,Simulated,68014,13565,4451,9114,671,15.08
+test3,Bimodal,NestedLoops,Simulated,102547,18519,4725,13794,165,3.49
