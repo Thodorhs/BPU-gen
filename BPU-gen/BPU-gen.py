@@ -97,7 +97,8 @@ def get_test_class(algorithm):
     test_map = {
         "Bimodal": "BimodalTest",
         "GAg": "GAgSpec",
-        "PAg": "PAgSpec"
+        "PAg": "PAgSpec",
+        "Tournament": "TournamentSpec"
     }
     return test_map.get(algorithm, None)
 
@@ -138,10 +139,15 @@ def generate_plots():
                 algo = row["Algorithm"]
                 mispred_rate = float(row["Mispred Rate"])
                 pht_size = "Unknown"
-                if config_name in config_data and "pattern_history_table_size" in config_data[config_name]:
-                    pht_size = str(config_data[config_name]["pattern_history_table_size"])
+                if config_name in config_data:
+                    cfg = config_data[config_name]
+                    if "pattern_history_table_size" in cfg:
+                        pht_size = str(cfg["pattern_history_table_size"])
+                    elif "choice_table_size" in cfg:
+                        # For Tournament: use the meta/choice PHT size
+                        pht_size = str(cfg["choice_table_size"])
 
-                #create the bar label: testname_algorithm_phtsize
+                # create the bar label: testname_algorithm_phtsize
                 label = f"{config_name}\n{algo}\n(PHT: {pht_size})"
 
                 group_key = (platform, test_type)

@@ -19,6 +19,16 @@
     "algorithm": "Bimodal",
     "pattern_history_table_size": 128,
     "counter_width": 2
+  },
+  "test4": {
+    "algorithm": "Tournament",
+    "choice_table_size": 1024,
+    "choice_counter_width": 2,
+    "local_pht_size": 128,
+    "local_counter_width": 2,
+    "global_pht_size": 128,
+    "global_ghr_size": 10,
+    "global_counter_width": 2
   }
 }
 

@@ -9,6 +9,8 @@ sealed trait bpu_config {
 
 case class BimodalConfig(address_width: Int, counter_width: Int, pht_size: Int, activeLowReset: Boolean) extends bpu_config
 case class GAgConfig(address_width : Int, counter_width : Int, pht_size : Int,  ghr_size : Int, pc_bits : Int = 0, activeLowReset: Boolean) extends bpu_config
+case class TournamentConfig(address_width: Int,choiceTableSize: Int,choiceCounterWidth: Int,localPhtSize: Int,localCounterWidth: Int,globalPhtSize: Int,globalGhrSize: Int,
+globalCounterWidth: Int,activeLowReset: Boolean) extends bpu_config
 
 object json {
 
@@ -61,6 +63,47 @@ object json {
 
         println(s"Parsed and validated GAg config '$name'")
         GAgConfig(address_width = address_width, counter_width= counter_width , pht_size = pht_size, ghr_size = ghr_size, pc_bits = pc_bits, activeLowReset)
+      case "Tournament" =>
+        val choice_table_size    = bpu_config("choice_table_size").num.toInt
+        val choice_counter_width = bpu_config("choice_counter_width").num.toInt
+
+        // Local predictor parameters (Bimodal)
+        val local_pht_size       = bpu_config("local_pht_size").num.toInt
+        val local_counter_width  = bpu_config("local_counter_width").num.toInt
+
+        // Global predictor parameters (GAg)
+        val global_pht_size      = bpu_config("global_pht_size").num.toInt
+        val global_ghr_size      = bpu_config("global_ghr_size").num.toInt
+        val global_counter_width = bpu_config("global_counter_width").num.toInt
+
+        // Validations for Choice (Meta) Table
+        require(choice_table_size > 0, "Tournament Error: choice_table_size must be > 0")
+        require((choice_table_size & (choice_table_size - 1)) == 0, "Tournament Error: choice_table_size must be a power of 2")
+        require(choice_counter_width >= 2, "Tournament Error: choice_counter_width must be >= 2")
+
+        // Validations for Local Table
+        require(local_pht_size > 0, "Tournament Error: local_pht_size must be > 0")
+        require((local_pht_size & (local_pht_size - 1)) == 0, "Tournament Error: local_pht_size must be a power of 2")
+        require(local_counter_width >= 2, "Tournament Error: local_counter_width must be >= 2")
+
+        // Validations for Global Table
+        require(global_pht_size > 0, "Tournament Error: global_pht_size must be > 0")
+        require((global_pht_size & (global_pht_size - 1)) == 0, "Tournament Error: global_pht_size must be a power of 2")
+        require(global_ghr_size > 0, "Tournament Error: global_ghr_size must be > 0")
+        require(global_counter_width >= 2, "Tournament Error: global_counter_width must be >= 2")
+
+        println(s"Parsed and validated Tournament config '$name'")
+        TournamentConfig(
+          address_width       = address_width,
+          choiceTableSize    = choice_table_size,
+          choiceCounterWidth = choice_counter_width,
+          localPhtSize       = local_pht_size,
+          localCounterWidth  = local_counter_width,
+          globalPhtSize      = global_pht_size,
+          globalGhrSize      = global_ghr_size,
+          globalCounterWidth = global_counter_width,
+          activeLowReset     = activeLowReset
+        )
       case other =>
         throw new Exception(s"""Unknown or not implemented algorithm: '$other'. Valid options are: Bimodal, GAg, PAg.""")
     }

@@ -2,7 +2,7 @@ package predictor_core
 
 import chisel3._
 import _root_.interface.predictor_io
-import help.{bpu_config, BimodalConfig, GAgConfig} // Import the configs
+import help.{bpu_config, BimodalConfig, GAgConfig, TournamentConfig} // Import the configs
 
 class predictor_top(config: bpu_config) extends RawModule {
     val clk = IO(Input(Clock()))
@@ -14,6 +14,7 @@ class predictor_top(config: bpu_config) extends RawModule {
       val core = config match {
         case b: BimodalConfig => Module(new bimodal(b))
         case g: GAgConfig     => Module(new GAg(g))
+        case t: TournamentConfig => Module(new ChiselTournament(t))
         case _ => throw new Exception("Unknown config passed to PredictorTop!")
       }
 
