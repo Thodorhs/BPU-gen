@@ -12,6 +12,7 @@ case class GAgConfig(address_width : Int, counter_width : Int, pht_size : Int,  
 case class TournamentConfig(address_width: Int,choiceTableSize: Int,choiceCounterWidth: Int,localPhtSize: Int,localCounterWidth: Int,globalPhtSize: Int,globalGhrSize: Int,
 globalCounterWidth: Int,activeLowReset: Boolean) extends bpu_config
 
+case class PAgConfig(address_width : Int, counter_width : Int, pht_size : Int,  history_table_w : Int, history_table_sz : Int, pc_bits : Int = 0, activeLowReset: Boolean) extends bpu_config
 object json {
 
   def parse_config(name: String, path: String = "config.json"): bpu_config = {
@@ -104,6 +105,20 @@ object json {
           globalCounterWidth = global_counter_width,
           activeLowReset     = activeLowReset
         )
+      case "PAg" =>
+        val pht_size = bpu_config("pattern_history_table_size").num.toInt
+        val counter_width = bpu_config("counter_width").num.toInt
+        val history_table_w = bpu_config("history_table_width").num.toInt
+        val history_table_s = bpu_config("history_table_size").num.toInt
+        val pc_bits = log2Ceil(history_table_s)
+        println(s"Parsed and validated PAg config '$name'")
+        PAgConfig(address_width = address_width,
+          counter_width = counter_width,
+          pht_size = pht_size,
+          history_table_w = history_table_w,
+          history_table_sz = history_table_s,
+          pc_bits = pc_bits,
+          activeLowReset = activeLowReset)
       case other =>
         throw new Exception(s"""Unknown or not implemented algorithm: '$other'. Valid options are: Bimodal, GAg, PAg.""")
     }
