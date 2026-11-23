@@ -4,7 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import help.GAgConfig
 import predictor_core.GAg
 
-class GAgSpec extends AnyFlatSpec with ChiselScalatestTester {
+class GAgTest extends AnyFlatSpec with ChiselScalatestTester {
 
   behavior of "GAg"
 

@@ -1,11 +1,10 @@
-package predictor_core
-
+import help.PAgConfig
 import chisel3._
 import chiseltest._
 import org.scalatest.flatspec.AnyFlatSpec
-import help.PAgConfig
+import predictor_core.PAg
 
-class PAgTest extends AnyFlatSpec with ChiselScalatestTester {
+class PAGTest extends AnyFlatSpec with ChiselScalatestTester {
 
   // 16-entry PHT, 2-bit counters, 4 local histories of 4 bits each.
   // History table index = PC[3:2], so PCs 0x0, 0x4, 0x8, 0xC map to entries 0..3,

@@ -96,8 +96,8 @@ def get_test_class(algorithm):
     # map the JSON algorithm name to the ChiselTest class name
     test_map = {
         "Bimodal": "BimodalTest",
-        "GAg": "GAgSpec",
-        "PAg": "PAgSpec",
+        "GAg": "GAgTest",
+        "PAg": "PAGTest",
         "Tournament": "TournamentSpec"
     }
     return test_map.get(algorithm, None)

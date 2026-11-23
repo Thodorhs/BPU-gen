@@ -1,4 +1,6 @@
 package help
+import chisel3.util.log2Ceil
+
 import scala.io.Source
 import ujson.Value
 
