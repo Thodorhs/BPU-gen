@@ -20,6 +20,10 @@ object BPU_gen extends App {
     emitVerilog(new predictor_top(config))
 
   } catch {
-    case e: Exception => println(s"\n[ERROR] ${e.getMessage}\n")
+    case e: Exception =>
+      println(s"\n[ERROR] ${e.getMessage}\n")
+      // non-zero exit code: sbt (and BPU-gen.py) must see that generation failed,
+      // otherwise an old predictor_top.sv would be used without anyone noticing
+      sys.exit(1)
   }
 }

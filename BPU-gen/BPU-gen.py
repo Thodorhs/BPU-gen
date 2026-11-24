@@ -211,6 +211,12 @@ def generate_bpu(config_name, target_file):
     # STEP 2: Run SBT to Generate the Hardware
     log("--> 2. Running Chisel Generator (SBT)...\n")
 
+    # remove the previous output first, so a failed generation can never leave
+    # an old predictor_top.sv (from another config) to be copied into the CPU
+    old_output = os.path.join(CHISEL_PROJECT_DIR, "predictor_top.sv")
+    if os.path.exists(old_output):
+        os.remove(old_output)
+
     sbt_cmd = ["sbt", f"runMain BPU_gen {config_name}"]
     subprocess.run(sbt_cmd, cwd=CHISEL_PROJECT_DIR, check=True, capture_output=True, text=True, shell=True)
 

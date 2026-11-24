@@ -29,6 +29,8 @@
     "global_pht_size": 128,
     "global_ghr_size": 10,
     "global_counter_width": 2
-  }
+  },
+  "test5": { "algorithm": "PAg", "pattern_history_table_size": 1024, "counter_width": 2,
+    "history_table_width": 10, "history_table_size": 256 }
 }
 
